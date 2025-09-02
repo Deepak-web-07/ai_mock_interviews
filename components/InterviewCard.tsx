@@ -1,12 +1,16 @@
-import { getRandomInterviewCover } from '@/lib/utils';
+import { cn, getRandomInterviewCover } from '@/lib/utils';
 import dayjs from 'dayjs'
 import Link from 'next/link';
 import Image from 'next/image'
+import { Button } from "./ui/button";
 import DisplayTechIcons from './DisplayTechIcons';
 import { id } from 'zod/v4/locales';
+import { getFeedbackByInterviewId } from '@/lib/actions/general.action';
 
-const InterviewCard = ({ id, userId, role, type, techstack, createdAt }: InterviewCardProps) => {
-    const feedback = null as Feedback | null;
+const InterviewCard = async ({ id, userId, role, type, techstack, createdAt }: InterviewCardProps) => {
+    const feedback = userId && id
+    ? await getFeedbackByInterviewId({ interviewId: id, userId })
+    : null;
     const normalizedType = /mix/gi.test(type) ? 'Mixed' : type;
     const formattedDate = dayjs(feedback?.createdAt || createdAt || Date.now()).format('MMM D, YYYY');
 
